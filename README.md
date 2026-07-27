@@ -1,194 +1,204 @@
-# atliq-fmcg-data-engineering
+# 🚀 End-to-End Data Engineering Pipeline using Databricks | AtliQ FMCG
 
 ## 📌 Project Overview
 
-This project demonstrates the implementation of a scalable data engineering pipeline using the Databricks Lakehouse Platform.
+This project demonstrates the design and implementation of an end-to-end data engineering pipeline using the Databricks Lakehouse Platform.
 
-Raw business data is ingested from Amazon S3, processed through the Bronze, Silver, and Gold layers using Lakeflow Declarative Pipelines, and served to business users through interactive dashboards and Databricks Genie.
+The project is based on a real-world merger and acquisition (M&A) business scenario where **AtliQon**, a leading sports equipment manufacturer, acquires **Sports Bar**, a fast-growing startup specializing in athletic nutrition products.
 
-The solution follows modern data engineering best practices, including layered data architecture, automated data processing, incremental loading, centralized governance with Unity Catalog, and analytics-ready reporting.
+Following the acquisition, leadership needed a unified analytics platform capable of integrating data from both organizations despite their completely different data ecosystems.
 
-# 🏢 Business Problem
-
-As the business grows, data is generated from multiple operational systems and stored in raw CSV files.
-
-Business users require reliable and centralized reporting to answer questions such as:
-
-- Which products generate the highest revenue?
-- Which sales channels perform best?
-- How is revenue changing over time?
-- Which customers contribute the most to overall sales?
-- How can leadership make data-driven business decisions?
-
-Manually preparing reports is time-consuming, error-prone, and difficult to scale.
-
-The objective of this project is to build an automated, scalable, and reliable data platform capable of transforming raw operational data into trusted business insights.
+The solution was built using **Amazon S3, Databricks, PySpark, Delta Lake, Unity Catalog, Lakeflow Declarative Pipelines, and Databricks SQL** to create a scalable Medallion Architecture (Bronze → Silver → Gold) for enterprise analytics.
 
 ---
 
-# 🎯 Objectives
+# 🏢 Business Problem
 
-- Build an end-to-end ETL pipeline using Databricks
-- Implement the Medallion Architecture
-- Automate data ingestion using Lakeflow Pipelines
-- Process historical and incremental data loads
-- Create analytics-ready Gold tables
-- Deliver interactive dashboards for business stakeholders
+Following the acquisition of Sports Bar, AtliQon faced significant challenges integrating data from two organizations with vastly different data environments.
+
+### AtliQon
+
+AtliQon already operated on a mature ERP-driven ecosystem with a modern analytics platform built on Databricks.
+
+Its data pipeline followed a structured Medallion Architecture consisting of:
+
+- Bronze Layer – Raw data ingestion
+- Silver Layer – Data cleansing and transformation
+- Gold Layer – Business-ready analytical datasets powering dashboards and AI analytics
+
+### Sports Bar
+
+Sports Bar, however, relied on fragmented operational systems.
+
+Business data originated from:
+
+- OLTP databases
+- Excel spreadsheets
+- Cloud storage
+- WhatsApp exports
+- Internal APIs
+
+Without a centralized analytics platform, reports were generated directly from operational databases, resulting in:
+
+- Inconsistent reporting
+- Conflicting sales and revenue metrics
+- Missing historical data
+- Poor scalability
+- Limited visibility across both organizations
+
+As AtliQon prepared to unify supply chain planning, forecasting, inventory management, and enterprise reporting, integrating these disconnected data sources became a critical business requirement.
+
+---
+
+# 🎯 Project Objectives
+
+The objective of this project was to design a scalable data platform capable of:
+
+- Integrating data from AtliQon and Sports Bar
+- Creating a single source of truth for enterprise reporting
+- Standardizing data processing across both organizations
+- Supporting historical and incremental data ingestion
+- Delivering analytics-ready datasets for business intelligence
+- Building a solution that could support Sports Bar until its full system modernization
 
 ---
 
 # 🏗️ Solution Architecture
 
-
-### Pipeline Flow
+The proposed solution extends AtliQon's existing Lakehouse architecture by introducing a dedicated Medallion pipeline for Sports Bar.
 
 ```
-Amazon S3
-      │
-      ▼
+Sports Bar Operational Data
+            │
+            ▼
+        Amazon S3
+            │
+            ▼
 Lakeflow Declarative Pipelines
-      │
-      ▼
-Bronze Layer (Raw Data)
-      │
-      ▼
-Silver Layer (Cleaned & Transformed Data)
-      │
-      ▼
-Gold Layer (Business Ready Analytics)
-      │
-      ├────────► Databricks SQL Dashboard
-      │
-      └────────► Databricks Genie
+            │
+            ▼
+      Bronze Layer
+      (Raw Data)
+            │
+            ▼
+      Silver Layer
+(Cleansed & Transformed)
+            │
+            ▼
+       Gold Layer
+ (Analytics Ready)
+            │
+            ├────────────┐
+            ▼            │
+     AtliQon Gold Layer  │
+            │            │
+            └──────┬─────┘
+                   ▼
+        Enterprise Gold Layer
+                   │
+                   ▼
+      Databricks SQL Dashboard
+                   │
+                   ▼
+          Databricks Genie
 ```
 
-Unity Catalog is used to manage governance, permissions, and metadata across the platform.
+Instead of replacing Sports Bar's existing systems, data is exported to Amazon S3, processed through the Medallion Architecture, and merged with AtliQon's Gold Layer to enable unified enterprise analytics.
 
 ---
 
 # ⚙️ Technology Stack
 
-| Category | Technologies |
-|-----------|--------------|
+| Category | Technology |
+|----------|------------|
 | Cloud Storage | Amazon S3 |
-| Data Platform | Databricks |
+| Data Platform | Databricks Lakehouse |
 | Processing | PySpark |
 | Storage | Delta Lake |
-| Governance | Unity Catalog |
+| Data Governance | Unity Catalog |
 | Orchestration | Lakeflow Declarative Pipelines |
 | Query Engine | Databricks SQL |
-| Reporting | Databricks SQL Dashboard |
+| Dashboarding | Databricks SQL Dashboard |
 | AI Analytics | Databricks Genie |
 
 ---
 
-# 🔄 Data Engineering Workflow
+# 🔄 Pipeline Workflow
 
-## 1. Data Ingestion
+### 1. Data Ingestion
 
-Business data is uploaded to Amazon S3.
-
-Lakeflow Declarative Pipelines automatically ingest the source data into the Bronze Layer.
+Raw operational data from Sports Bar is uploaded to Amazon S3 and automatically ingested into Databricks.
 
 ---
 
-## 2. Bronze Layer
+### 2. Bronze Layer
 
-The Bronze Layer stores raw source data exactly as received.
-
-Activities include:
-
-- Raw data ingestion
-- Schema creation
-- Delta table generation
-- Historical data preservation
+- Raw file ingestion
+- Schema preservation
+- Delta table creation
 
 ---
 
-## 3. Silver Layer
+### 3. Silver Layer
 
-The Silver Layer prepares data for analytics through transformation and cleansing.
-
-Processing includes:
-
-- Data validation
+- Data cleansing
 - Duplicate removal
 - Null handling
-- Data type standardization
-- Business rule implementation
+- Data type validation
+- Business transformations
 
 ---
 
-## 4. Gold Layer
+### 4. Gold Layer
 
-The Gold Layer contains analytics-ready datasets optimized for reporting and business intelligence.
-
-This layer provides:
-
-- Aggregated metrics
-- Reporting tables
-- Business KPIs
-- Optimized SQL queries
+Business-ready datasets are created for reporting and enterprise analytics.
 
 ---
 
-## 5. Historical Load
+### 5. Historical Load
 
-Historical datasets are loaded during the initial pipeline execution to establish a complete reporting foundation.
-
----
-
-## 6. Incremental Load
-
-After the initial load, only newly arrived or modified records are processed.
-
-Benefits include:
-
-- Faster execution
-- Lower compute costs
-- Improved scalability
-- Efficient production pipelines
+The pipeline performs an initial full load of historical datasets to establish the analytical foundation.
 
 ---
 
-## 7. Data Serving
+### 6. Incremental Load
 
-Business users access analytics through:
+Only newly arrived or modified records are processed in subsequent executions, improving scalability and reducing processing time.
 
-- Databricks SQL Dashboards
-- Databricks Genie
+---
 
-These tools enable self-service analytics without requiring direct access to raw datasets.
+### 7. Enterprise Analytics
+
+Sports Bar's Gold Layer is merged with AtliQon's existing Gold Layer, enabling unified dashboards and AI-powered business insights.
 
 ---
 
 # 📊 Dashboard
 
-The final dashboard provides business insights including:
+The final Databricks SQL Dashboard provides business users with unified analytics across both organizations, including:
 
-- Total Revenue
-- Monthly Revenue Trends
-- Revenue by Sales Channel
-- Customer Performance
+- Revenue Analysis
 - Product Performance
-- Sales Distribution
+- Customer Insights
+- Sales Channels
+- Monthly Revenue Trends
 - Business KPIs
 
 ---
 
 # 🌟 Key Features
 
-- End-to-End ETL Pipeline
-- Medallion Architecture
+- End-to-End Data Engineering Pipeline
+- Medallion Architecture (Bronze → Silver → Gold)
 - Amazon S3 Integration
 - Delta Lake Storage
-- Automated Lakeflow Pipelines
+- Historical & Incremental Data Loading
+- PySpark Transformations
+- Lakeflow Declarative Pipelines
 - Unity Catalog Governance
-- Historical Data Loading
-- Incremental Processing
-- Analytics-Ready Gold Layer
-- Interactive Business Dashboard
-- AI-powered Insights with Databricks Genie
+- Enterprise Data Integration
+- Interactive Databricks SQL Dashboard
+- AI-powered Analytics using Databricks Genie
 
 ---
 
@@ -196,14 +206,16 @@ The final dashboard provides business insights including:
 
 Through this project, I gained hands-on experience with:
 
-- Building scalable data pipelines
-- Designing Medallion Architecture
-- Working with Delta Lake
-- Automating ETL workflows
-- Implementing historical and incremental loading
-- Data modeling for analytics
-- Developing business dashboards
-- Applying modern Lakehouse architecture principles
+- Databricks Lakehouse Platform
+- Designing scalable ETL pipelines
+- Medallion Architecture
+- Delta Lake
+- PySpark Data Transformations
+- Historical vs Incremental Loading
+- Workflow Orchestration
+- Enterprise Data Integration
+- Data Modeling
+- Business Intelligence
 
 ---
 
@@ -211,12 +223,14 @@ Through this project, I gained hands-on experience with:
 
 Future improvements include:
 
-- Implement Change Data Capture (CDC)
-- Integrate CI/CD pipelines
-- Add automated data quality validation
-- Deploy streaming pipelines
-- Implement monitoring and alerting
-- Enhance AI-powered analytics using Databricks Genie
+- Change Data Capture (CDC)
+- Real-time Streaming Pipelines
+- Automated Data Quality Checks
+- CI/CD Integration
+- Monitoring & Alerting
+- Performance Optimization
 
----
 
+### 🙏 Acknowledgement
+
+A sincere thank you to **Codebasics** for designing this industry-inspired project. It provided valuable hands-on experience in building modern data engineering solutions using the Databricks Lakehouse Platform and reinforced how scalable data architectures solve real-world business challenges following mergers and acquisitions.
