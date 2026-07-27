@@ -2,96 +2,222 @@
 
 ## 📌 Project Overview
 
-This project demonstrates the design and implementation of an end-to-end data engineering pipeline using the Databricks Lakehouse Platform.
-The solution ingests raw sales data stored in Amazon S3, processes it through the Medallion Architecture (Bronze → Silver → Gold), and delivers analytics-ready datasets that power an interactive business dashboard.
-The project follows industry-standard data engineering practices including historical loading, incremental loading, orchestration, dimensional modeling, and dashboard development.
+This project demonstrates the implementation of a scalable data engineering pipeline using the Databricks Lakehouse Platform.
+
+Raw business data is ingested from Amazon S3, processed through the Bronze, Silver, and Gold layers using Lakeflow Declarative Pipelines, and served to business users through interactive dashboards and Databricks Genie.
+
+The solution follows modern data engineering best practices, including layered data architecture, automated data processing, incremental loading, centralized governance with Unity Catalog, and analytics-ready reporting.
 
 # 🏢 Business Problem
 
-AtliQ is a growing FMCG company that generates sales data across multiple business channels, customers, products, and regions.
-Business teams require reliable, timely, and centralized reporting to answer questions such as:
+As the business grows, data is generated from multiple operational systems and stored in raw CSV files.
 
- Which products generate the highest revenue?
- Which customers contribute the most sales?
- How does revenue change over time?
- Which sales channels perform best?
- What trends help support strategic business decisions?
+Business users require reliable and centralized reporting to answer questions such as:
 
-Raw operational data alone cannot answer these questions efficiently.
+- Which products generate the highest revenue?
+- Which sales channels perform best?
+- How is revenue changing over time?
+- Which customers contribute the most to overall sales?
+- How can leadership make data-driven business decisions?
 
-The objective was to build a scalable data platform capable of transforming raw transactional data into analytics-ready datasets for reporting and decision-making.
+Manually preparing reports is time-consuming, error-prone, and difficult to scale.
+
+The objective of this project is to build an automated, scalable, and reliable data platform capable of transforming raw operational data into trusted business insights.
+
+---
 
 # 🎯 Objectives
 
-Build an end-to-end ETL pipeline using Databricks
-Implement Medallion Architecture
-Process historical and incremental data
-Create optimized Gold Layer reporting tables
-Develop an interactive dashboard for business users
+- Build an end-to-end ETL pipeline using Databricks
+- Implement the Medallion Architecture
+- Automate data ingestion using Lakeflow Pipelines
+- Process historical and incremental data loads
+- Create analytics-ready Gold tables
+- Deliver interactive dashboards for business stakeholders
 
-#  Data Engineering Workflow
+---
 
-## 1️⃣ Data Ingestion
+# 🏗️ Solution Architecture
 
-Uploaded source datasets into Amazon S3
-Connected Databricks with S3 using External Location
-Imported raw datasets into Bronze Layer
+![Architecture](architecture/project_architecture.png)
 
-## 2️⃣ Bronze Layer
+### Pipeline Flow
 
-The Bronze Layer stores raw data exactly as received.
+```
+Amazon S3
+      │
+      ▼
+Lakeflow Declarative Pipelines
+      │
+      ▼
+Bronze Layer (Raw Data)
+      │
+      ▼
+Silver Layer (Cleaned & Transformed Data)
+      │
+      ▼
+Gold Layer (Business Ready Analytics)
+      │
+      ├────────► Databricks SQL Dashboard
+      │
+      └────────► Databricks Genie
+```
 
-Tasks performed:
+Unity Catalog is used to manage governance, permissions, and metadata across the platform.
 
-Raw CSV ingestion
-Schema definition
-Delta table creation
+---
 
-## 3️⃣ Silver Layer
+# ⚙️ Technology Stack
 
-The Silver Layer transforms raw data into clean, reliable datasets.
+| Category | Technologies |
+|-----------|--------------|
+| Cloud Storage | Amazon S3 |
+| Data Platform | Databricks |
+| Processing | PySpark |
+| Storage | Delta Lake |
+| Governance | Unity Catalog |
+| Orchestration | Lakeflow Declarative Pipelines |
+| Query Engine | Databricks SQL |
+| Reporting | Databricks SQL Dashboard |
+| AI Analytics | Databricks Genie |
 
-Transformations include:
+---
 
-Data cleaning
-Duplicate removal
-Null handling
-Data type corrections
-Dimension table processing
-Business transformations
+# 🔄 Data Engineering Workflow
 
-## 4️⃣ Gold Layer
+## 1. Data Ingestion
 
-The Gold Layer contains business-ready datasets optimized for reporting.
+Business data is uploaded to Amazon S3.
 
-Implemented:
+Lakeflow Declarative Pipelines automatically ingest the source data into the Bronze Layer.
 
-Fact tables
-Dimension tables
-Denormalized reporting views
-Sales metrics
+---
 
-## 5️⃣ Historical Load
+## 2. Bronze Layer
 
-Performed an initial full load of historical sales data into the Gold Layer.
+The Bronze Layer stores raw source data exactly as received.
 
-This establishes the baseline dataset for reporting.
+Activities include:
 
-## 6️⃣ Incremental Load
+- Raw data ingestion
+- Schema creation
+- Delta table generation
+- Historical data preservation
 
-Implemented incremental processing to load only newly arrived records.
+---
+
+## 3. Silver Layer
+
+The Silver Layer prepares data for analytics through transformation and cleansing.
+
+Processing includes:
+
+- Data validation
+- Duplicate removal
+- Null handling
+- Data type standardization
+- Business rule implementation
+
+---
+
+## 4. Gold Layer
+
+The Gold Layer contains analytics-ready datasets optimized for reporting and business intelligence.
+
+This layer provides:
+
+- Aggregated metrics
+- Reporting tables
+- Business KPIs
+- Optimized SQL queries
+
+---
+
+## 5. Historical Load
+
+Historical datasets are loaded during the initial pipeline execution to establish a complete reporting foundation.
+
+---
+
+## 6. Incremental Load
+
+After the initial load, only newly arrived or modified records are processed.
 
 Benefits include:
 
-Faster processing
-Reduced compute cost
-Better scalability
+- Faster execution
+- Lower compute costs
+- Improved scalability
+- Efficient production pipelines
 
-## 7️⃣ Pipeline Orchestration
+---
 
-Built an automated workflow to execute the pipeline in the correct order:
+## 7. Data Serving
 
-Bronze
-Silver
-Gold
-Dashboard Refresh
+Business users access analytics through:
+
+- Databricks SQL Dashboards
+- Databricks Genie
+
+These tools enable self-service analytics without requiring direct access to raw datasets.
+
+---
+
+# 📊 Dashboard
+
+The final dashboard provides business insights including:
+
+- Total Revenue
+- Monthly Revenue Trends
+- Revenue by Sales Channel
+- Customer Performance
+- Product Performance
+- Sales Distribution
+- Business KPIs
+
+---
+
+# 🌟 Key Features
+
+- End-to-End ETL Pipeline
+- Medallion Architecture
+- Amazon S3 Integration
+- Delta Lake Storage
+- Automated Lakeflow Pipelines
+- Unity Catalog Governance
+- Historical Data Loading
+- Incremental Processing
+- Analytics-Ready Gold Layer
+- Interactive Business Dashboard
+- AI-powered Insights with Databricks Genie
+
+---
+
+# 📚 Key Learnings
+
+Through this project, I gained hands-on experience with:
+
+- Building scalable data pipelines
+- Designing Medallion Architecture
+- Working with Delta Lake
+- Automating ETL workflows
+- Implementing historical and incremental loading
+- Data modeling for analytics
+- Developing business dashboards
+- Applying modern Lakehouse architecture principles
+
+---
+
+# 🚀 Future Enhancements
+
+Future improvements include:
+
+- Implement Change Data Capture (CDC)
+- Integrate CI/CD pipelines
+- Add automated data quality validation
+- Deploy streaming pipelines
+- Implement monitoring and alerting
+- Enhance AI-powered analytics using Databricks Genie
+
+---
+
