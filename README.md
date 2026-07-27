@@ -39,7 +39,6 @@ The objective of this project is to build an automated, scalable, and reliable d
 
 # 🏗️ Solution Architecture
 
-![Architecture](architecture/project_architecture.png)
 
 ### Pipeline Flow
 
